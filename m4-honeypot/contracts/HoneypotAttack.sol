@@ -1,29 +1,6 @@
 pragma solidity ^0.4.18;
 
-// FINAL
-
-contract HoneyPot {
-    mapping (address => uint) public balances;
-
-    function HoneyPot() payable {
-        put();
-    }
-
-    function put() payable {
-        balances[msg.sender] = msg.value;
-    }
-
-    function get() {
-        require(msg.sender.call.value(balances[msg.sender])());
-        balances[msg.sender] = 0;
-    }
-
-    function() {
-        revert();
-    }
-    
-    function getBalance() public view returns (uint256) { return this.balance; }
-}
+import "./Honeypot.sol";
 
 contract HoneyPotAttack {
     HoneyPot public hp;
@@ -80,3 +57,4 @@ contract HoneyPotAttack {
 
     function getBalance() public view returns (uint256) { return this.balance; }
 }
+
