@@ -12,10 +12,8 @@ contract HoneyPotAttack {
     function HoneyPotAttack(HoneyPot _hp) public payable {
         owner = msg.sender;
         hp = _hp;
-        //attack();
-        //withdraw();
     }
-    
+
     // deposit funds, then get them back, multiple times
     function attack() public {
         require(msg.sender == owner);
